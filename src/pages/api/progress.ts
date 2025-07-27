@@ -3,7 +3,6 @@ import { ProgressResponse, ApiError } from '@/types';
 import connectDB from '@/lib/database';
 import { CardModel, UserModel } from '@/lib/database';
 import { getCardDescription } from '@/lib/cardData';
-import { updateCardProgressWithTransaction } from '@/lib/transactions';
 
 export default async function handler(
   req: NextApiRequest,
@@ -80,30 +79,32 @@ export default async function handler(
       });
     }
 
-    // Use transaction for atomic updates
-    const result = await updateCardProgressWithTransaction(
-      cardId,
-      user._id.toString(),
-      2, // progress increase
-      1  // energy cost
-    );
+    // Calculate new progress
+    const newProgress = Math.min(100, card.progress + 2);
+    const isLevelUp = newProgress >= 100 && card.progress < 100;
 
-    if (!result.success) {
-      return res.status(500).json({
-        message: result.error || 'Transaction failed',
-        code: 'TRANSACTION_FAILED',
-        status: 500,
-      });
+    // Update card
+    card.progress = isLevelUp ? 0 : newProgress;
+    
+    if (isLevelUp) {
+      card.level = Math.min(3, card.level + 1);
+      card.image = `/images/${card.type}_${card.level}.png`;
+      card.description = getCardDescription(card.type, card.level);
     }
 
-    const { card: updatedCard, user: updatedUser } = result.data!;
+    // Update user energy (only if not leveling up)
+    if (!isLevelUp) {
+      user.energy = Math.max(0, user.energy - 1);
+    }
 
-    const isLevelUp = updatedCard.progress === 0 && card.progress < 100;
-    
+    // Save both documents
+    await card.save();
+    await user.save();
+
     const response: ProgressResponse = {
-      progress: updatedCard.progress,
-      energy: updatedUser.energy,
-      level: updatedCard.level,
+      progress: card.progress,
+      energy: user.energy,
+      level: card.level,
       success: true,
       message: isLevelUp ? 'Card leveled up!' : 'Progress updated successfully',
     };

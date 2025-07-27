@@ -78,18 +78,24 @@ export default async function handler(
       cards = await CardModel.insertMany(defaultCards);
     }
 
-    // Transform cards to match frontend expectations
-    const transformedCards = cards.map(card => ({
-      id: card._id.toString(),
-      name: card.name,
-      description: card.description,
-      level: card.level,
-      progress: card.progress,
-      image: card.image,
-      type: card.type,
-      createdAt: card.createdAt,
-      updatedAt: card.updatedAt,
-    }));
+    // Transform cards to match frontend expectations and sort by CARD_TYPES order
+    const transformedCards = cards
+      .map(card => ({
+        id: card._id.toString(),
+        name: card.name,
+        description: card.description,
+        level: card.level,
+        progress: card.progress,
+        image: card.image,
+        type: card.type,
+        createdAt: card.createdAt,
+        updatedAt: card.updatedAt,
+      }))
+      .sort((a, b) => {
+        const aIndex = CARD_TYPES.indexOf(a.type as any);
+        const bIndex = CARD_TYPES.indexOf(b.type as any);
+        return aIndex - bIndex;
+      });
 
     const response: CardsResponse = {
       cards: transformedCards,

@@ -45,11 +45,11 @@ export default async function handler(
       });
     }
 
-    // Calculate energy regeneration (0.5 energy per minute = 1 energy per 2 minutes)
+    // Calculate energy regeneration (1 energy per 2 minutes)
     const now = new Date();
     const timeDiff = now.getTime() - user.lastEnergyRegeneration.getTime();
     const minutesPassed = timeDiff / (1000 * 60); // Convert to minutes with decimals
-    const energyGained = Math.floor(minutesPassed * 0.5); // 0.5 energy per minute
+    const energyGained = Math.floor(minutesPassed / 2); // 1 energy per 2 minutes
 
     // Update energy (max 100)
     const oldEnergy = user.energy;
@@ -70,7 +70,7 @@ export default async function handler(
     const response: EnergyResponse = {
       energy: user.energy,
       regenerationTime,
-      regenerationRate: 0.5, // 0.5 energy per minute
+      regenerationRate: 1, // 1 energy per 2 minutes
       success: true,
     };
 

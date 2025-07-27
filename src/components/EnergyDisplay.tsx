@@ -99,7 +99,7 @@ export default function EnergyDisplay({ energy, onEnergyUpdate }: EnergyDisplayP
           
           <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-400">
-              %{energy.regenerationRate * 2} Yenilenmesine Kalan: {timeString}
+              %{energy.regenerationRate} Yenilenmesine Kalan: {timeString}
             </span>
           </div>
         </div>

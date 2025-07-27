@@ -156,12 +156,12 @@ export function getCardData(type: CardType): CardData {
 }
 
 export const CARD_TYPES: CardType[] = [
-  'uzun_kilic',
-  'savas_baltasi',
-  'buyu_asasi',
-  'kalkan',
-  'savas_cekici',
-  'egri_kilic',
-  'kisa_kilic',
-  'buyu_kitabi',
+  'uzun_kilic',      // Uzun Kılıç
+  'savas_baltasi',   // Savaş Baltası
+  'buyu_asasi',      // Büyü Asası
+  'kalkan',          // Kalkan
+  'savas_cekici',    // Savaş Çekici
+  'egri_kilic',      // Eğri Kılıç
+  'kisa_kilic',      // Kısa Kılıç
+  'buyu_kitabi',     // Büyü Kitabı
 ]; 
